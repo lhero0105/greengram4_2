@@ -37,7 +37,15 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(MyPrincipal principal, long tokenValidMs) {
+    public String generateAccessToken(MyPrincipal principal) {
+        return generateToken(principal, appProperties.getJwt().getAccessTokenExpiry());
+    }
+
+    public String generateRefreshToken(MyPrincipal principal) {
+        return generateToken(principal, appProperties.getJwt().getRefreshTokenExpiry());
+    }
+
+    private String generateToken(MyPrincipal principal, long tokenValidMs) {
         return Jwts.builder()
                 .claims(createClaims(principal))
                 .issuedAt(new Date(System.currentTimeMillis()))
