@@ -1,13 +1,19 @@
 package com.green.greengram4.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.green.greengram4.common.AppProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -16,26 +22,17 @@ import java.util.Date;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private final String secret;
-    private final String headerSchemeName;
-    private final String tokenType;
+    private final ObjectMapper om;
+    private final AppProperties appProperties;
     private Key key;
-
-    public JwtTokenProvider(@Value("${springboot.jwt.secret}") String secret
-                        , @Value("${springboot.jwt.header-scheme-name}") String headerSchemeName
-                        , @Value("${springboot.jwt.token-type}") String tokenType
-    ) {
-        this.secret = secret;
-        this.headerSchemeName = headerSchemeName;
-        this.tokenType = tokenType;
-    }
 
     @PostConstruct
     public void init() {
-        log.info("secret: {}", secret);
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        log.info("secret: {}", appProperties.getJwt().getSecret());
+        byte[] keyBytes = Decoders.BASE64.decode(appProperties.getJwt().getSecret());
         log.info("keyBytes: {}", keyBytes);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -50,20 +47,61 @@ public class JwtTokenProvider {
     }
 
     private Claims createClaims(MyPrincipal principal) {
-        return Jwts.claims()
-                .add("iuser", principal.getIuser())
-                .build();
+        try {
+            String json = om.writeValueAsString(principal);
+            return Jwts.claims()
+                    .add("user", json)
+                    .build();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String resolveToken(HttpServletRequest req) {
-        String auth = req.getHeader(headerSchemeName);
+        String auth = req.getHeader(appProperties.getJwt().getHeaderSchemeName());
         if(auth == null) { return null; }
 
         //Bearer Askladjflaksjfw309jasdklfj
-        if(auth.startsWith(tokenType)) {
-            return auth.substring(tokenType.length()).trim();
+        if(auth.startsWith(appProperties.getJwt().getTokenType())) {
+            return auth.substring(appProperties.getJwt().getTokenType().length()).trim();
         }
         return null;
         //return auth == null ? null : auth.startsWith();
+    }
+
+    public boolean isValidateToken(String token) {
+        try {
+            //만료기간 현재시간보다 전이면 false, 현재시간이 만료기간보다 후이면 false
+            //만료기간 현재시간보다 후이면 true, 현재시간이 만료기간보다 전이면 true
+            return !getAllClaims(token).getExpiration().before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Claims getAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = getUserDetailsFromToken(token);
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    private UserDetails getUserDetailsFromToken(String token) {
+        try {
+            Claims claims = getAllClaims(token);
+            String json = (String)claims.get("user");
+            MyPrincipal myPrincipal = om.readValue(json, MyPrincipal.class);
+            return MyUserDetails.builder()
+                    .myPrincipal(myPrincipal)
+                    .build();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

@@ -1,10 +1,11 @@
-springboot:
+app:
   jwt:
     secret: DaeguGreenArtAcademyClass502RoomForJavaSpringBootFighting
     header-scheme-name: authorization
     token-type: Bearer
     access-token-expiry: 7200000
     refresh-token-expiry: 1296000000
+
 
 spring:
   datasource:
