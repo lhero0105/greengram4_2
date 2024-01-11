@@ -1,3 +1,4 @@
+"
 - (FE) 아이디, 비번 BE로 전달 
 - (BE) 아이디, 비번 인증처리 > AT, RT 발행
                                    > AT, RT 안에는 MyPrincipal(userPk) 객체 내용이 포함
@@ -10,3 +11,4 @@
               Authentication 객체 주소값을 담는다.
 - (BE) SecurityContext 객체 안에 Authentication 객체 주소값이 있으면 로그인되었다라고
         판단, 없으면 비로그인 상태라고 판단
+"
