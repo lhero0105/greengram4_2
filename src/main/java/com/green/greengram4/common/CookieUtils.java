@@ -10,7 +10,7 @@ public class CookieUtils {
     public Cookie getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
 
-        if(cookies != null || cookies.length > 0) {
+        if(cookies != null && cookies.length > 0) {
             for(Cookie cookie : cookies) {
                 if(name.equals(cookie.getName())) {
                     return cookie;
@@ -30,6 +30,7 @@ public class CookieUtils {
 
     public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie cookie = getCookie(request, name);
+        if(cookie == null) { return; }
         cookie.setValue(null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);

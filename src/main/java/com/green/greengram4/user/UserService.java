@@ -61,9 +61,9 @@ public class UserService {
         String rt = jwtTokenProvider.generateRefreshToken(myPrincipal);
 
         //rt > cookie에 담을꺼임
-        //int rtCookieMaxAge = appProperties.getJwt().getRefreshTokenCookieMaxAge();
-        //cookieUtils.deleteCookie(req, res, "rt");
-        //cookieUtils.setCookie(res, "rt", rt, rtCookieMaxAge);
+        int rtCookieMaxAge = appProperties.getJwt().getRefreshTokenCookieMaxAge();
+        cookieUtils.deleteCookie(req, res, "rt");
+        cookieUtils.setCookie(res, "rt", rt, rtCookieMaxAge);
 
         return UserSigninVo.builder()
                 .result(Const.SUCCESS)
