@@ -2,10 +2,13 @@ package com.green.greengram4.user;
 
 import com.green.greengram4.common.AppProperties;
 import com.green.greengram4.common.Const;
+import com.green.greengram4.common.CookieUtils;
 import com.green.greengram4.common.ResVo;
 import com.green.greengram4.security.JwtTokenProvider;
 import com.green.greengram4.security.MyPrincipal;
 import com.green.greengram4.user.model.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
@@ -19,6 +22,8 @@ public class UserService {
     private final UserMapper mapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AppProperties appProperties;
+    private final CookieUtils cookieUtils;
 
     public ResVo signup(UserSignupDto dto) {
         String hashedPw = passwordEncoder.encode(dto.getUpw());
@@ -37,7 +42,7 @@ public class UserService {
         return new ResVo(pDto.getIuser()); //회원가입한 iuser pk값이 리턴
     }
 
-    public UserSigninVo signin(UserSigninDto dto) {
+    public UserSigninVo signin(HttpServletRequest req, HttpServletResponse res, UserSigninDto dto) {
         UserSelDto sDto = new UserSelDto();
         sDto.setUid(dto.getUid());
 
@@ -56,6 +61,9 @@ public class UserService {
         String rt = jwtTokenProvider.generateRefreshToken(myPrincipal);
 
         //rt > cookie에 담을꺼임
+        //int rtCookieMaxAge = appProperties.getJwt().getRefreshTokenCookieMaxAge();
+        //cookieUtils.deleteCookie(req, res, "rt");
+        //cookieUtils.setCookie(res, "rt", rt, rtCookieMaxAge);
 
         return UserSigninVo.builder()
                 .result(Const.SUCCESS)
