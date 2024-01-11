@@ -97,7 +97,7 @@ public class JwtTokenProvider {
                 : new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-    private UserDetails getUserDetailsFromToken(String token) {
+    public UserDetails getUserDetailsFromToken(String token) {
         try {
             Claims claims = getAllClaims(token);
             String json = (String)claims.get("user");

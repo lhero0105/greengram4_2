@@ -37,6 +37,11 @@ public class UserController {
         return service.signout(res);
     }
 
+    @GetMapping("/refresh-token")
+    public UserSigninVo getRefreshToken(HttpServletRequest req) {
+        return service.getRefreshToken(req);
+    }
+
     @GetMapping
     @Operation(summary = "유저 정보", description = "프로필 화면에서 사용할 프로필 유저 정보")
     public UserInfoVo getUserInfo(UserInfoSelDto dto) {

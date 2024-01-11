@@ -6,12 +6,16 @@ import com.green.greengram4.common.CookieUtils;
 import com.green.greengram4.common.ResVo;
 import com.green.greengram4.security.JwtTokenProvider;
 import com.green.greengram4.security.MyPrincipal;
+import com.green.greengram4.security.MyUserDetails;
 import com.green.greengram4.user.model.*;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +82,32 @@ public class UserService {
     public ResVo signout(HttpServletResponse res) {
         cookieUtils.deleteCookie(res, "rt");
         return new ResVo(1);
+    }
+
+    public UserSigninVo getRefreshToken(HttpServletRequest req) {
+        Cookie cookie = cookieUtils.getCookie(req, "rt");
+        if(cookie == null) {
+            return UserSigninVo.builder()
+                    .result(Const.FAIL)
+                    .accessToken(null)
+                    .build();
+        }
+        String token = cookie.getValue();
+        if(!jwtTokenProvider.isValidateToken(token)) {
+            return UserSigninVo.builder()
+                    .result(Const.FAIL)
+                    .accessToken(null)
+                    .build();
+        }
+        MyUserDetails myUserDetails = (MyUserDetails) jwtTokenProvider.getUserDetailsFromToken(token);
+        MyPrincipal myPrincipal = myUserDetails.getMyPrincipal();
+
+        String at = jwtTokenProvider.generateAccessToken(myPrincipal);
+
+        return UserSigninVo.builder()
+                .result(Const.SUCCESS)
+                .accessToken(at)
+                .build();
     }
 
     public UserInfoVo getUserInfo(UserInfoSelDto dto) {
