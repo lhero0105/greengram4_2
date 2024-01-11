@@ -62,7 +62,7 @@ public class UserService {
 
         //rt > cookie에 담을꺼임
         int rtCookieMaxAge = appProperties.getJwt().getRefreshTokenCookieMaxAge();
-        cookieUtils.deleteCookie(req, res, "rt");
+        cookieUtils.deleteCookie(res, "rt");
         cookieUtils.setCookie(res, "rt", rt, rtCookieMaxAge);
 
         return UserSigninVo.builder()
@@ -73,6 +73,11 @@ public class UserService {
                 .firebaseToken(entity.getFirebaseToken())
                 .accessToken(at)
                 .build();
+    }
+
+    public ResVo signout(HttpServletResponse res) {
+        cookieUtils.deleteCookie(res, "rt");
+        return new ResVo(1);
     }
 
     public UserInfoVo getUserInfo(UserInfoSelDto dto) {

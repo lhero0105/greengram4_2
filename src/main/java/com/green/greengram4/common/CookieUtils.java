@@ -28,11 +28,10 @@ public class CookieUtils {
         response.addCookie(cookie);
     }
 
-    public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
-        Cookie cookie = getCookie(request, name);
-        if(cookie == null) { return; }
-        cookie.setValue(null);
+    public void deleteCookie(HttpServletResponse response, String name) {
+        Cookie cookie = new Cookie(name, null);
         cookie.setMaxAge(0);
+        cookie.setPath("/");
         response.addCookie(cookie);
     }
 }

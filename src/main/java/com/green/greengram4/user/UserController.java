@@ -32,6 +32,11 @@ public class UserController {
         return service.signin(req, res, dto);  //result - 1: 성공, 2: 아이디 없음, 3: 비밀번호 틀림
     }
 
+    @PostMapping("/signout")
+    public ResVo postSignout(HttpServletResponse res) {
+        return service.signout(res);
+    }
+
     @GetMapping
     @Operation(summary = "유저 정보", description = "프로필 화면에서 사용할 프로필 유저 정보")
     public UserInfoVo getUserInfo(UserInfoSelDto dto) {
