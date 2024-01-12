@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,10 +24,11 @@ public class FeedController {
 
     @Operation(summary = "피드 등록", description = "피드 등록 처리")
     @PostMapping
-    public ResVo postFeed(@RequestBody FeedInsDto dto) {
-        ResVo vo = service.postFeed(dto);
-        System.out.println(vo.getResult());
-        return vo;
+    public ResVo postFeed(@RequestPart List<MultipartFile> pics, @RequestPart FeedInsDto dto) {
+        log.info("pics: {}", pics.size());
+        log.info("dto: {}", dto);
+        dto.setPics(pics);
+        return service.postFeed(dto);
     }
 
     @GetMapping

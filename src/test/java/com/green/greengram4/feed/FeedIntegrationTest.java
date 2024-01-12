@@ -30,7 +30,7 @@ public class FeedIntegrationTest extends BaseIntegrationTest {
         dto.setLocation("그린컴퓨터학원3");
 
         List<String> pics = new ArrayList();
-        dto.setPics(pics);
+        //dto.setPics(pics);
         pics.add("https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5268%2F2023%2F01%2F30%2F0001751386_001_20230130092601625.jpg&type=sc960_832");
         pics.add("https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F003%2F2023%2F12%2F27%2FNISI20231227_0020174760_web_20231227100846_20231227101024426.jpg&type=sc960_832");
 
