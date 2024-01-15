@@ -106,6 +106,7 @@ public class JwtTokenProvider {
                     .myPrincipal(myPrincipal)
                     .build();
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
