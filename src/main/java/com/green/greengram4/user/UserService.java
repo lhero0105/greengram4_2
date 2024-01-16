@@ -123,7 +123,9 @@ public class UserService {
     public UserPicPatchDto patchUserPic(MultipartFile pic) {
         UserPicPatchDto dto = new UserPicPatchDto();
         dto.setIuser(authenticationFacade.getLoginUserPk());
-        String savedPicFileNm = myFileUtils.transferTo(pic, "/user/" + dto.getIuser());
+        String path = "/user/" + dto.getIuser();
+        myFileUtils.delFilesTrigger(path);
+        String savedPicFileNm = myFileUtils.transferTo(pic, path);
         dto.setPic(savedPicFileNm);
         int affectedRows = mapper.updUserPic(dto);
         return dto;
