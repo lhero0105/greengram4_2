@@ -1,9 +1,7 @@
 package com.green.greengram4.user;
 
-import com.green.greengram4.common.AppProperties;
-import com.green.greengram4.common.Const;
-import com.green.greengram4.common.CookieUtils;
-import com.green.greengram4.common.ResVo;
+import com.green.greengram4.common.*;
+import com.green.greengram4.security.AuthenticationFacade;
 import com.green.greengram4.security.JwtTokenProvider;
 import com.green.greengram4.security.MyPrincipal;
 import com.green.greengram4.security.MyUserDetails;
@@ -18,6 +16,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -28,6 +27,8 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AppProperties appProperties;
     private final CookieUtils cookieUtils;
+    private final AuthenticationFacade authenticationFacade;
+    private final MyFileUtils myFileUtils;
 
     public ResVo signup(UserSignupDto dto) {
         String hashedPw = passwordEncoder.encode(dto.getUpw());
@@ -119,9 +120,13 @@ public class UserService {
         return new ResVo(affectedRows);
     }
 
-    public ResVo patchUserPic(UserPicPatchDto dto) {
+    public UserPicPatchDto patchUserPic(MultipartFile pic) {
+        UserPicPatchDto dto = new UserPicPatchDto();
+        dto.setIuser(authenticationFacade.getLoginUserPk());
+        String savedPicFileNm = myFileUtils.transferTo(pic, "/user/" + dto.getIuser());
+        dto.setPic(savedPicFileNm);
         int affectedRows = mapper.updUserPic(dto);
-        return new ResVo(affectedRows);
+        return dto;
     }
 
     public ResVo toggleFollow(UserFollowDto dto) {
