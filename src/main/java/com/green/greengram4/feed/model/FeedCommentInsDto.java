@@ -15,7 +15,7 @@ public class FeedCommentInsDto {
     @Min(1)
     private int ifeed;
     // @Range Integer 타입
-    @NotEmpty // null 이거나 비어있을떄
+    @NotEmpty // null 이거나 비어있을 떄
     @Size(min = 3)
     private String comment;
 }
