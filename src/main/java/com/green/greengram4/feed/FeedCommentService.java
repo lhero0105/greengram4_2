@@ -1,9 +1,13 @@
 package com.green.greengram4.feed;
 
 import com.green.greengram4.common.ResVo;
+import com.green.greengram4.exception.ErrorResponse;
+import com.green.greengram4.exception.FeedErrorCode;
+import com.green.greengram4.exception.RestApiException;
 import com.green.greengram4.feed.model.FeedCommentInsDto;
 import com.green.greengram4.feed.model.FeedCommentSelDto;
 import com.green.greengram4.feed.model.FeedCommentSelVo;
+import com.green.greengram4.security.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,8 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeedCommentService {
     private final FeedCommentMapper mapper;
-
+    private final AuthenticationFacade authenticationFacade;
     public ResVo postFeedComment(FeedCommentInsDto dto) {
+        /*if(dto.getIfeed() == 0 || dto.getComment() == null || "".equals(dto.getComment())){
+            throw new RestApiException(FeedErrorCode.IMPOSSIBLE_PEG_COMMENT);
+        }*/
+        dto.setIuser(authenticationFacade.getLoginUserPk());
         int affectedRows = mapper.insFeedComment(dto);
         return new ResVo(dto.getIfeedComment());
     }

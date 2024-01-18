@@ -3,6 +3,8 @@ package com.green.greengram4.feed;
 import com.green.greengram4.common.Const;
 import com.green.greengram4.common.MyFileUtils;
 import com.green.greengram4.common.ResVo;
+import com.green.greengram4.exception.FeedErrorCode;
+import com.green.greengram4.exception.RestApiException;
 import com.green.greengram4.feed.model.*;
 import com.green.greengram4.security.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,10 @@ public class FeedService {
     private final MyFileUtils myFileUtils;
 
     public FeedPicsInsDto postFeed(FeedInsDto dto) {
+        if(dto.getPics() == null){
+            throw new RestApiException(FeedErrorCode.PICS_MORE_TEHN_ONE);
+        }
+
         dto.setIuser(authenticationFacade.getLoginUserPk());
         log.info("dto: {}", dto);
         int feedAffectedRows = mapper.insFeed(dto);

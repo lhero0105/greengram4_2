@@ -1,19 +1,18 @@
 package com.green.greengram4.user;
 
 import com.green.greengram4.common.*;
+import com.green.greengram4.exception.AuthErrorCode;
+import com.green.greengram4.exception.RestApiException;
 import com.green.greengram4.security.AuthenticationFacade;
 import com.green.greengram4.security.JwtTokenProvider;
 import com.green.greengram4.security.MyPrincipal;
 import com.green.greengram4.security.MyUserDetails;
 import com.green.greengram4.user.model.*;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,10 +51,10 @@ public class UserService {
         sDto.setUid(dto.getUid());
 
         UserEntity entity = mapper.selUser(sDto);
-        if(entity == null) {
-            return UserSigninVo.builder().result(Const.LOGIN_NO_UID).build();
+        if(entity == null) { // 아이디 없음
+            throw new RestApiException(AuthErrorCode.NOT_EXIST_USER_TO);
         } else if(!passwordEncoder.matches(dto.getUpw(), entity.getUpw())) {
-            return UserSigninVo.builder().result(Const.LOGIN_DIFF_UPW).build();
+            throw new RestApiException(AuthErrorCode.VALID_PASSWORD);
         }
 
         MyPrincipal myPrincipal = MyPrincipal.builder()
@@ -124,7 +123,7 @@ public class UserService {
         UserPicPatchDto dto = new UserPicPatchDto();
         dto.setIuser(authenticationFacade.getLoginUserPk());
         String path = "/user/" + dto.getIuser();
-        myFileUtils.delFilesTrigger(path);
+        myFileUtils.delFolderTrigger(path);
         String savedPicFileNm = myFileUtils.transferTo(pic, path);
         dto.setPic(savedPicFileNm);
         int affectedRows = mapper.updUserPic(dto);
