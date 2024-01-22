@@ -43,7 +43,21 @@ fcm:
 spring:
   config:
     activate:
-      on-profile: "prod"
+      on-profile: "prod1"
   datasource:
-    url: jdbc:mariadb://192.168.0.144:55/greengram3
-    password: greendev1
+    url: jdbc:mariadb://192.168.0.84:3306/greengram4
+    password: green502
+
+file:
+  dir: /home/download/
+server:
+  port: 8081
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "prod2"
+server:
+  port: 8082

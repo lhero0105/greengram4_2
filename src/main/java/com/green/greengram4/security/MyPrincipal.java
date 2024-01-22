@@ -9,4 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class MyPrincipal {
     private int iuser;
+
 }

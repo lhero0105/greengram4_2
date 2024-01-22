@@ -16,27 +16,27 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice //AOP - 노션 // 어떤 언어로 개발했는지 안뜨게 할 수 있습니다.
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(IllegalArgumentException.class)
+    /*@ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity <Object> handleIllegalArgument(IllegalArgumentException e){
         log.warn("handleIllegalArgument", e);
         return handleExceptionInternal(CommonErrorCode.INVALID_PARAMETER);
     }
 
-/*    @Override
+*//*    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
-    }*/
+    }*//*
 
     @ExceptionHandler(MethodArgumentNotValidException.class) // 에러담당자가 왼쪽과 같이 있다면
-    public ResponseEntity<Object> handleMethodArgumentNotvalidException(MethodArgumentNotValidException e){ // 에러들을 왼쪽에 담습니다.
-        log.warn("handleMethodArgumentNotvalidException", e);
-/*        List<String> errors = new ArrayList<>();
+    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){ // 에러들을 왼쪽에 담습니다.
+        log.warn("handleMethodArgumentNotValidException", e);
+*//*        List<String> errors = new ArrayList<>();
         for ( FieldError lfe : e.getBindingResult().getFieldErrors() ) {
             errors.add(lfe.getDefaultMessage());
             // 객체마다 디폴트 메세지 안에 하나씩 갖고있는데
             // 거기다가 하나씩 add합니다.
-        } // 스트림 이용 x*/
+        } // 스트림 이용 x*//*
         List<String> errors = e.getBindingResult()
                                 .getFieldErrors()
                                 .stream() // 1. 넘어온 리스트를 스트림으로 바꿉니다.
@@ -84,5 +84,40 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(message)
                 .build();
         // 다른 메세지를 사용 시 얘를 호출합니다.
+    }*/
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e) {
+        log.warn("handleIllegalArgument", e);
+        return handleExceptionInternal(CommonErrorCode.INVALID_PARAMETER);
+    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleException(Exception e) {
+        log.warn("handleException", e);
+        return handleExceptionInternal(CommonErrorCode.INTERNAL_SERVAL_ERROR);
+    }
+    @ExceptionHandler(RestApiException.class)
+    public ResponseEntity<Object> handleRestApiException(RestApiException e) {
+        log.warn("handleRestApiException", e);
+        return handleExceptionInternal(e.getErrorCode());
+    }
+    private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
+        return handleExceptionInternal(errorCode, null);
+    }
+    private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode
+            , String message) {
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(message == null
+                        ? makeErrorResponse(errorCode)
+                        : makeErrorResponse(errorCode, message));
+    }
+    private ErrorResponse makeErrorResponse(ErrorCode errorCode) {
+        return makeErrorResponse(errorCode, errorCode.getMessage());
+    }
+    private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message) {
+        return ErrorResponse.builder()
+                .code(errorCode.name())
+                .message(message)
+                .build();
     }
 }
