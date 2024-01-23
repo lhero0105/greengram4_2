@@ -38,6 +38,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 Resource requestedResource = location.createRelative(resourcePath);
                 // If we actually hit a file, serve that. This is stuff like .js and .css files.
                 if (requestedResource.exists() && requestedResource.isReadable()) {
+                    // 리소스가 존재하는지 && 읽을수있다면
                     return requestedResource;
                 }
                 // Anything else returns the index.
