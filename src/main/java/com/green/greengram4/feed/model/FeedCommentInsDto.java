@@ -12,7 +12,7 @@ public class FeedCommentInsDto {
     private int ifeedComment;
     @JsonIgnore
     private int iuser;
-    @Min(1)
+    @Min(value = 1, message = "메세지를 1개이상 입력해주")
     private int ifeed;
     // @Range Integer 타입
     @NotEmpty // null 이거나 비어있을 떄

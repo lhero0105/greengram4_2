@@ -8,6 +8,7 @@ public class AuthenticationFacade {
     public MyUserDetails getLoginUser() {
         return (MyUserDetails) SecurityContextHolder
                                 .getContext()
+                // 비로그인 : 여기까지 리턴되도록
                                 .getAuthentication()
                                 .getPrincipal();
     }

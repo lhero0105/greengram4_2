@@ -39,7 +39,7 @@ class FeedControllerTest {
     @Test
     void postFeed() throws Exception {
         ResVo result = new ResVo(7);
-        given(service.postFeed(any())).willReturn(result);
+        /*given(service.postFeed(any())).willReturn(result);*/
 
         FeedInsDto dto = new FeedInsDto();
         String json = mapper.writeValueAsString(dto);

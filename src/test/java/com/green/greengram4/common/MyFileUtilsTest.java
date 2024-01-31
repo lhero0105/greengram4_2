@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MyFileUtilsTest {
 
     @Autowired
-    private MyFileUtils myFileUtils;
+    private MyFileUtils myFileUtils; //
 
     @Test
     public void makeFolderTest() {

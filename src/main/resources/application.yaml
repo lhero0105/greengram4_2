@@ -15,8 +15,8 @@ spring:
       max-file-size: 5MB
       max-request-size: 15MB
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://192.168.0.84:3306/greengram4
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mariadb://localhost:3306/greengram3
     username: root
     password: green502
 
@@ -61,3 +61,19 @@ spring:
       on-profile: "prod2"
 server:
   port: 8082
+
+openapi:
+  apartment:
+    base-url: http://openapi.molit.go.kr
+    data-url: OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev
+    service-key: rCkmPtGAcUJgZytrfHlxFeIxzUPRcv6lbOGMKaj1nYnhkMkWr3Y%2FeSi06DUwI3Md6Nl%2BWa1MlqUUG0QRXTtOkA%3D%3D
+
+logging:
+  level:
+    jdbc:
+      sqlonly: off
+      sqltiming: info
+      resultsettable: info
+      audit: off
+      resultset: off
+      connection: off

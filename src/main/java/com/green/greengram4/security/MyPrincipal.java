@@ -5,7 +5,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor // json to object 시
 @AllArgsConstructor
 public class MyPrincipal {
     private int iuser;

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @ConfigurationPropertiesScan
+// @ConfigurationProperties(prefix = "app") 를 줄 때 사용됩ㄴ다.
 @SpringBootApplication
 public class Greengram4Application {
 
